@@ -3,6 +3,7 @@ import { IUserDBSchema } from '../models/UserDBSchema';
 import UserRepository from '../repositories/UserRepository';
 import { ILoginResponse } from '../types/types';
 import { comparePassword, generateToken, hashPassword } from '../auth';
+import PlantRepository from "../repositories/PlantRepository";
 
 
 class UserService {
@@ -46,6 +47,7 @@ class UserService {
       userName: user.userName,
       password: '',
       email: user.email,
+      plants: [],
       hashedPassword: hashedPassword,
     }
     const jwt = generateToken(user.userName)
@@ -65,7 +67,28 @@ class UserService {
       isLogined: true,
       userId: userObject._id.toString()
     }
+  }
 
+  static async addPlantToUser(userId: string, plantId: string): Promise<any> {
+    const userPlants = await UserRepository.addPlantToUser(userId , plantId);
+    if (!userPlants || userPlants.length === 0) {
+      return {
+        message: 'No plants found for this user.',
+        status: 404
+      };
+    }
+    return userPlants;
+  }
+
+  static async getAllPlantByUserId(userId: string): Promise<any> {
+    const userPlants = await UserRepository.getAllPlantByUserId(userId);
+    if (!userPlants || userPlants.length === 0) {
+      return {
+        message: 'No plants found for this user.',
+        status: 404
+      };
+    }
+    return userPlants;
   }
 }
 

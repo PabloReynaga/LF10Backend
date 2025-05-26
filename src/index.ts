@@ -62,17 +62,9 @@ app.get('/getAllPlants', async (req: Request, res: Response, next: NextFunction)
   }
 });
 
-app.get('/getAllPlantByUserId/:userId', async (req: Request, res: Response, next: NextFunction) => {
+app.get('/getAllPlantsByUserId/:userId', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    await PlantController.getAllPlantByUserId(req, res);
-  } catch (error) {
-    next(error);
-  }
-});
-
-app.post('/saveCustomPlant', async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    await PlantController.saveCustomPlant(req, res);
+    await UserController.getAllPlantByUserId(req, res);
   } catch (error) {
     next(error);
   }
@@ -80,15 +72,8 @@ app.post('/saveCustomPlant', async (req: Request, res: Response, next: NextFunct
 
 app.post('/addPlantToUser', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    await PlantController.addPlantToUser(req, res);
-  } catch (error) {
-    next(error);
-  }
-});
-
-app.delete('/removePlantFromUser', async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    await PlantController.removePlantFromUser(req, res);
+    console.log(req.body);
+    await UserController.addPlantToUser(req, res);
   } catch (error) {
     next(error);
   }
