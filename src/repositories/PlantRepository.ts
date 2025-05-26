@@ -1,10 +1,20 @@
 import { ICreatedNote, INote } from '../types/types';
-import NoteDBSchema, { INoteDBSchema } from '../models/NoteDBSchema';
+import PlantDBSchema, { IPlantDBSchema } from '../models/PlantDBSchema';
 
-class NoteRepository{
+class PlantRepository {
+
+  static async getAllPlants(): Promise<any> {
+    try {
+      return await PlantDBSchema.find({});
+    } catch (error) {
+      console.error("Database Error:", error);
+      throw new Error("Error getting plants from database");
+    }
+  }
+
   static async createNote( note : INote): Promise< any> {
     try{
-      return await new NoteDBSchema(note).save();
+      return await new PlantDBSchema(note).save();
     }catch (error){
       console.error("Database Error:", error);
       throw new Error("Error creating a new note");
@@ -12,8 +22,7 @@ class NoteRepository{
   }
   static async getAllNotesByUserId(userId: string): Promise<any> {
     try{
-      const resp = await NoteDBSchema.find({userId: userId});
-      return resp
+       return await PlantDBSchema.find({userId: userId});
     } catch (error){
       console.error("Database Error:", error);
       throw new Error("Error getting notes from database");
@@ -21,7 +30,7 @@ class NoteRepository{
   }
   static async deleteNote(noteId: string): Promise<any> {
     try{
-      return await NoteDBSchema.deleteOne({_id: noteId});
+      return await PlantDBSchema.deleteOne({_id: noteId});
     } catch (error){
       console.error("Database Error:", error);
       throw new Error("Error getting notes from database");
@@ -30,7 +39,7 @@ class NoteRepository{
 
   static async updateNote(note : any): Promise<any> {
     try{
-      return await NoteDBSchema.findByIdAndUpdate(
+      return await PlantDBSchema.findByIdAndUpdate(
         note._id,
           {
             title: note.title,
@@ -47,4 +56,4 @@ class NoteRepository{
   }
 }
 
-export default NoteRepository;
+export default PlantRepository;

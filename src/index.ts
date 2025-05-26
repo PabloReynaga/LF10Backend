@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 import { configureSocket } from './socket';
 import dbConnection from './db/db.connection';
 import cors from 'cors';
-import NoteController from './controllers/NoteController';
+import PlantController from './controllers/PlantController';
 import UserController from './controllers/UserController';
 import { Request, Response, NextFunction } from 'express';
 
@@ -37,20 +37,6 @@ configureSocket(io);
 
 app.use(express.json());
 
-app.post('/createNote', async (req: Request, res: Response, next: NextFunction) => {
-  try{
-    await NoteController.createNote(req, res, next)
-  } catch (error){
-    next(error);
-  }
-})
-app.post('/updateNote', async (req: Request, res: Response, next: NextFunction) => {
-  try{
-    await NoteController.updateNote(req, res, next)
-  } catch (error){
-    next(error);
-  }
-})
 
 app.post('/register', async (req:Request, res:Response, next:NextFunction) => {
   try{
@@ -68,21 +54,45 @@ app.post('/login', async (req:Request, res:Response, next:NextFunction) => {
   }
 });
 
-app.get('/getAllNotes/:id',async (req: Request, res : Response, next: NextFunction) => {
-  try{
-     await NoteController.getAllNotesByUserId(req, res)
-  }catch (error){
+app.get('/getAllPlants', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await PlantController.getAllPlants(req, res);
+  } catch (error) {
     next(error);
   }
-})
+});
 
-app.delete('/deleteNote/:id',async (req:Request, res : Response, next: NextFunction) => {
-  try{
-    await NoteController.deleteNote(req,res)
-  }catch (error){
+app.get('/getAllPlantByUserId/:userId', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await PlantController.getAllPlantByUserId(req, res);
+  } catch (error) {
     next(error);
   }
-})
+});
+
+app.post('/saveCustomPlant', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await PlantController.saveCustomPlant(req, res);
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post('/addPlantToUser', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await PlantController.addPlantToUser(req, res);
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.delete('/removePlantFromUser', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await PlantController.removePlantFromUser(req, res);
+  } catch (error) {
+    next(error);
+  }
+});
 
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
