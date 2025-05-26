@@ -5,101 +5,77 @@ import { ILoginResponse } from '../types/types';
 import { comparePassword, generateToken, hashPassword } from '../auth';
 import PlantRepository from "../repositories/PlantRepository";
 
+import { ConflictError, NotFoundError, UnauthorizedError } from '../middlewares/errorHandler';
 
 class UserService {
-  static async login(user: IUser): Promise<ILoginResponse> {
-    console.log(user);
-    const userObject = await UserRepository.findUser(user.userName)
 
-    if (userObject == null) {
-      return {
-        message: 'User does not exist.',
-        status: 404
-      }
+  static async login(user: IUser): Promise<ILoginResponse> {
+    const userObject = await UserRepository.findUser(user.userName);
+
+    if (!userObject) {
+      throw new NotFoundError("User does not exist.");
     }
 
     const isPasswordValid = await comparePassword(user.password, userObject.hashedPassword);
     if (!isPasswordValid) {
-      return { message: 'Invalid credentials',
-        status: 401
-      }
+      throw new UnauthorizedError("Invalid credentials.");
     }
 
     const jwt = generateToken(user.userName);
-    return{
-      message: 'User Login successfully!',
+    return {
+      message: 'User login successful!',
       status: 200,
       token: jwt,
       isLogined: true,
-      userId: userObject._id.toString()
-    }
+      userId: userObject._id.toString(),
+    };
   }
-  static async register(user: IUser): Promise<IRegisterResponse> {
 
-    if (user.password == undefined){
-      return {
-        message: "Password is required.",
-        status: 409,
-      };
+  static async register(user: IUser): Promise<IRegisterResponse> {
+    if (!user.password) {
+      throw new ConflictError("Password is required.");
     }
-    const hashedPassword= await hashPassword(user.password);
+
+    const hashedPassword = await hashPassword(user.password);
+
     const userRegister = {
       userName: user.userName,
-      password: '',
+      password: '', // just to satisfy the interface
       email: user.email,
       plants: [],
-      hashedPassword: hashedPassword,
-    }
-    const jwt = generateToken(user.userName)
-    const userObject = await UserRepository.registerNewUser(userRegister)
+      hashedPassword,
+    };
 
-    if(userObject == null) {
-      return {
-        message: "User with this name already exists.",
-        status: 409,
-      };
+    const userObject = await UserRepository.registerNewUser(userRegister);
+    if (!userObject) {
+      throw new ConflictError("User with this name already exists.");
     }
 
-    return{
+    const jwt = generateToken(user.userName);
+
+    return {
       message: 'User registered successfully!',
       status: 200,
       token: jwt,
       isLogined: true,
-      userId: userObject._id.toString()
-    }
+      userId: userObject._id.toString(),
+    };
   }
 
   static async addPlantToUser(userId: string, plantId: string): Promise<any> {
-    const userPlants = await UserRepository.addPlantToUser(userId , plantId);
-    if (!userPlants || userPlants.length === 0) {
-      return {
-        message: 'No plants found for this user.',
-        status: 404
-      };
-    }
-    return userPlants;
+    return UserRepository.addPlantToUser(userId, plantId);
   }
 
   static async getAllPlantByUserId(userId: string): Promise<any> {
-    const userPlants = await UserRepository.getAllPlantByUserId(userId);
-    if (!userPlants || userPlants.length === 0) {
-      return {
-        message: 'No plants found for this user.',
-        status: 404
-      };
+    const plants = await UserRepository.getAllPlantByUserId(userId);
+    if (!plants) {
+      throw new NotFoundError("User not found or has no plants.");
     }
-    return userPlants;
+    return plants;
   }
 
   static async removePlantFromUser(userId: string, plantId: string): Promise<any> {
-    const userPlants = await UserRepository.removePlantFromUser(userId, plantId);
-    if (!userPlants || userPlants.length === 0) {
-      return {
-        message: 'No plants found for this user.',
-        status: 404
-      };
-    }
-    return userPlants;
+    return UserRepository.removePlantFromUser(userId, plantId);
   }
 }
 

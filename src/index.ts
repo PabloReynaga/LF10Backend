@@ -8,6 +8,7 @@ import cors from 'cors';
 import PlantController from './controllers/PlantController';
 import UserController from './controllers/UserController';
 import { Request, Response, NextFunction } from 'express';
+import { errorMiddleware } from './middlewares/errorMiddleware';
 
 
 dotenv.config();
@@ -40,7 +41,7 @@ app.use(express.json());
 
 app.post('/register', async (req:Request, res:Response, next:NextFunction) => {
   try{
-    await UserController.registerUser(req,res)
+    await UserController.registerUser(req,res,next)
   }catch (error){
     next(error);
   }
@@ -48,7 +49,7 @@ app.post('/register', async (req:Request, res:Response, next:NextFunction) => {
 
 app.post('/login', async (req:Request, res:Response, next:NextFunction) => {
   try{
-    await UserController.loginUser(req ,res)
+    await UserController.loginUser(req ,res, next)
   } catch (error) {
       next(error)
   }
@@ -64,7 +65,7 @@ app.get('/getAllPlants', async (req: Request, res: Response, next: NextFunction)
 
 app.get('/getAllPlantsByUserId/:userId', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    await UserController.getAllPlantByUserId(req, res);
+    await UserController.getAllPlantByUserId(req, res, next);
   } catch (error) {
     next(error);
   }
@@ -72,7 +73,7 @@ app.get('/getAllPlantsByUserId/:userId', async (req: Request, res: Response, nex
 
 app.post('/addPlantToUser', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    await UserController.addPlantToUser(req, res);
+    await UserController.addPlantToUser(req, res, next);
   } catch (error) {
     next(error);
   }
@@ -80,15 +81,19 @@ app.post('/addPlantToUser', async (req: Request, res: Response, next: NextFuncti
 
 app.delete('/removePlantFromUser', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    await UserController.removePlantFromUser(req, res);
+    await UserController.removePlantFromUser(req, res, next);
   } catch (error) {
     next(error);
   }
 
 })
 
+app.use(errorMiddleware)
+
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+
 
 

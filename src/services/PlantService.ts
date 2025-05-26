@@ -6,10 +6,7 @@ class PlantService {
   static async getAllPlants(): Promise<any> {
     const plantList = await PlantRepository.getAllPlants();
     if (!plantList || plantList.length === 0) {
-      return {
-        message: 'No plants found.',
-        status: 404
-      };
+      throw new Error('DataBase plants not found');
     }
     return plantList;
   }
