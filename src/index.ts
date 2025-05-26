@@ -72,12 +72,20 @@ app.get('/getAllPlantsByUserId/:userId', async (req: Request, res: Response, nex
 
 app.post('/addPlantToUser', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    console.log(req.body);
     await UserController.addPlantToUser(req, res);
   } catch (error) {
     next(error);
   }
 });
+
+app.delete('/removePlantFromUser', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await UserController.removePlantFromUser(req, res);
+  } catch (error) {
+    next(error);
+  }
+
+})
 
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

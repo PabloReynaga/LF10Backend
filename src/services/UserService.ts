@@ -90,6 +90,17 @@ class UserService {
     }
     return userPlants;
   }
+
+  static async removePlantFromUser(userId: string, plantId: string): Promise<any> {
+    const userPlants = await UserRepository.removePlantFromUser(userId, plantId);
+    if (!userPlants || userPlants.length === 0) {
+      return {
+        message: 'No plants found for this user.',
+        status: 404
+      };
+    }
+    return userPlants;
+  }
 }
 
 export default UserService;

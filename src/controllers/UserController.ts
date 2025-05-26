@@ -44,6 +44,16 @@ class UserController {
     }
   }
 
+  static async removePlantFromUser(req: Request, res: Response): Promise<any> {
+    try {
+      const data = await UserService.removePlantFromUser(req.body.userId, req.body.plantId);
+      res.status(200).json(data);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: 'Internal server error.' });
+    }
+  }
+
 }
 
 export default UserController;

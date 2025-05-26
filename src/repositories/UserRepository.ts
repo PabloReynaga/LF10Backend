@@ -49,10 +49,24 @@ class UserRepository {
       if (!user) {
         return null;
       }
-      return user;
+      return user.plants;
     } catch (error) {
       console.error("Database Error:", error);
       throw new Error("Error getting user's plants from database");
+    }
+  }
+
+  static async removePlantFromUser(userId: string, plantId: string): Promise<any> {
+    try {
+      const result = await UserDBSchema.updateOne(
+          { _id: new mongoose.Types.ObjectId(userId) },
+          { $pull: { plants: new mongoose.Types.ObjectId(plantId) } }
+      );
+
+      return result;
+    } catch (error) {
+      console.error("Database Error:", error);
+      throw new Error("Error removing plant from user");
     }
   }
 }
