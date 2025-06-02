@@ -66,6 +66,10 @@ class UserService {
     return UserRepository.addPlantToUser(userId, plantId);
   }
 
+  static async saveMessage(conversationId: string, senderId: string, text:string): Promise<any> {
+    return UserRepository.saveMessage(conversationId, senderId, text);
+  }
+
   static async getAllPlantByUserId(userId: string): Promise<any> {
     const plants = await UserRepository.getAllPlantByUserId(userId);
     if (!plants) {
@@ -79,6 +83,14 @@ class UserService {
   }
   static async getAllUsers(): Promise<any> {
     return UserRepository.getAllUsers();
+  }
+
+  static async getConversationFromUsers(conversationId :string): Promise<any> {
+    return UserRepository.getConversationFromUsers(conversationId);
+  }
+
+  static async initializeConversation(authUserId: string, userId:string): Promise<any> {
+    return UserRepository.initializeConversation(authUserId, userId);
   }
 }
 

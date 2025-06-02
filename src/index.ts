@@ -9,6 +9,7 @@ import PlantController from './controllers/PlantController';
 import UserController from './controllers/UserController';
 import { Request, Response, NextFunction } from 'express';
 import { errorMiddleware } from './middlewares/errorMiddleware';
+import userController from "./controllers/UserController";
 
 
 dotenv.config();
@@ -63,9 +64,17 @@ app.get('/getAllPlants', async (req: Request, res: Response, next: NextFunction)
   }
 });
 
-app.get('/messages/:conversationId', async (req: Request, res: Response, next: NextFunction) => {
+app.post('/initializeConversation', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    await PlantController.getAllPlants(req, res);
+    await userController.initializeConversation(req, res, next);
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post('/saveMessage', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await userController.saveMessage(req, res, next);
   } catch (error) {
     next(error);
   }
@@ -74,6 +83,14 @@ app.get('/messages/:conversationId', async (req: Request, res: Response, next: N
 app.get('/getAllUsers', async (req: Request, res: Response, next: NextFunction) => {
   try {
     await UserController.getAllUsers(res, next);
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get('/getConversationFromUsers/:conversationId', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await UserController.getConversationFromUsers( req ,res, next);
   } catch (error) {
     next(error);
   }

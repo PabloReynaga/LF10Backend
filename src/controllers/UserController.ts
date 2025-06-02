@@ -28,6 +28,14 @@ class UserController {
       next(error);
     }
   }
+  static async saveMessage(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const data = await UserService.saveMessage(req.body.conversationId, req.body.senderId, req.body.text);
+      res.status(200).json(data);
+    } catch (error) {
+      next(error);
+    }
+  }
 
   static async getAllPlantByUserId(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -49,6 +57,24 @@ class UserController {
   static async getAllUsers(res: Response, next: NextFunction): Promise<void> {
     try {
       const data = await UserService.getAllUsers();
+      res.status(200).json(data);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getConversationFromUsers(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const data = await UserService.getConversationFromUsers(req.params.conversationId);
+      res.status(200).json(data);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async initializeConversation( req:Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const data = await UserService.initializeConversation(req.body.authUserId, req.body.userId);
       res.status(200).json(data);
     } catch (error) {
       next(error);

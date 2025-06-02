@@ -1,6 +1,9 @@
 import UserDBSchema, { IUserDBSchema } from '../models/UserDBSchema';
+import ConversationDBSchema  from '../models/ConversationDBSchema';
+import MessageDBSchema  from '../models/MessageDBSchema';
 import { IUser } from '../types/types';
 import mongoose from "mongoose";
+
 
 class UserRepository {
   static async findUser(username: string): Promise<IUserDBSchema | null> {
@@ -43,6 +46,36 @@ class UserRepository {
 
     static async getAllUsers(): Promise<any> {
         return UserDBSchema.find();
+    }
+
+    static async getConversationFromUsers(conversationId: string): Promise<any> {
+        return MessageDBSchema.find({ conversationId }).sort({ createdAt: 1 });
+    }
+
+    static async saveMessage(conversationId: string, senderId: string, text: string): Promise<any> {
+
+
+        const newMessage = new MessageDBSchema({
+            conversationId,
+            sender: senderId,
+            text,
+        });
+        return await newMessage.save();
+    }
+
+    static async initializeConversation(authUserId : string, userId: string): Promise<any> {
+        const existingConversation = await ConversationDBSchema.findOne({
+            participants: { $all: [authUserId, userId], $size: 2 }
+
+        });
+        if (!existingConversation) {
+            const newConversation = new ConversationDBSchema({
+                participants: [authUserId, userId]
+            });
+            await newConversation.save();
+            return newConversation;
+        }
+        return existingConversation;
     }
 }
 export default UserRepository
