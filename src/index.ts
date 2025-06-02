@@ -63,6 +63,22 @@ app.get('/getAllPlants', async (req: Request, res: Response, next: NextFunction)
   }
 });
 
+app.get('/messages/:conversationId', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await PlantController.getAllPlants(req, res);
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get('/getAllUsers', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await UserController.getAllUsers(res, next);
+  } catch (error) {
+    next(error);
+  }
+});
+
 app.get('/getAllPlantsByUserId/:userId', async (req: Request, res: Response, next: NextFunction) => {
   try {
     await UserController.getAllPlantByUserId(req, res, next);

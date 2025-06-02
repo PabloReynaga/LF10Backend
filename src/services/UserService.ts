@@ -77,6 +77,9 @@ class UserService {
   static async removePlantFromUser(userId: string, plantId: string): Promise<any> {
     return UserRepository.removePlantFromUser(userId, plantId);
   }
+  static async getAllUsers(): Promise<any> {
+    return UserRepository.getAllUsers();
+  }
 }
 
 export default UserService;

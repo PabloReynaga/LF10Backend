@@ -40,5 +40,9 @@ class UserRepository {
         {$pull: {plants: new mongoose.Types.ObjectId(plantId)}}
     );
   }
+
+    static async getAllUsers(): Promise<any> {
+        return UserDBSchema.find();
+    }
 }
 export default UserRepository
